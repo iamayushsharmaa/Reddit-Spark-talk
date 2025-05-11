@@ -6,8 +6,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:spark_talk_reddit/core/constant/constants.dart';
 import 'package:spark_talk_reddit/core/constant/firestore_constants.dart';
 import 'package:spark_talk_reddit/core/failure.dart';
-import 'package:spark_talk_reddit/models/user_model.dart';
 import 'package:spark_talk_reddit/core/type_defs.dart';
+import 'package:spark_talk_reddit/models/user_model.dart';
 
 import '../../../core/providers/firebase_providers.dart';
 
@@ -59,12 +59,23 @@ class AuthRepository {
           awards: [],
         );
         await _users.doc(userCredential.user!.uid).set({userModel.toMap()});
+      } else {
+        userModel = await getUserData(userCredential.user!.uid).first;
       }
       return right(userModel);
-    } on FirebaseException catch (e){
+    } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
       return left(Failure(e.toString()));
     }
+  }
+
+  Stream<UserModel> getUserData(String uid) {
+    return _users
+        .doc(uid)
+        .snapshots()
+        .map(
+          (event) => UserModel.fromMap(event.data() as Map<String, dynamic>),
+        );
   }
 }
