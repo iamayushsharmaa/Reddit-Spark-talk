@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:spark_talk_reddit/signin_button.dart';
+import 'package:spark_talk_reddit/core/common/signin_button.dart';
 
-import 'constants.dart';
+import '../../../core/constant/constants.dart';
+
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 

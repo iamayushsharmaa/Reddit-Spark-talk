@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:spark_talk_reddit/pallete.dart';
+import 'package:spark_talk_reddit/theme/pallete.dart';
 
-import 'login_screen.dart';
+import 'features/auth/screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
