@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spark_talk_reddit/features/auth/repository/auth_repository.dart';
 
 final authControllerProvider = Provider(
-  (ref) => AuthController(authRepository: ref.read(authRepositoryProvider)),
+  (ref) => AuthController(
+      authRepository: ref.read(authRepositoryProvider)
+  ),
 );
 
 class AuthController {

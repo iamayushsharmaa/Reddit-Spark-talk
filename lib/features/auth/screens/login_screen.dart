@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spark_talk_reddit/core/common/signin_button.dart';
+import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart';
 
 import '../../../core/constant/constants.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
