@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:spark_talk_reddit/core/constant/constants.dart';
 import 'package:spark_talk_reddit/core/constant/firestore_constants.dart';
+import 'package:spark_talk_reddit/core/failure.dart';
 import 'package:spark_talk_reddit/models/user_model.dart';
+import 'package:spark_talk_reddit/core/type_defs.dart';
 
 import '../../../core/providers/firebase_providers.dart';
 
@@ -28,10 +31,11 @@ class AuthRepository {
   }) : _firebaseFirestore = firebaseFirestore,
        _auth = auth,
        _googleSignIn = googleSignIn;
-  
-  CollectionReference get _users => _firebaseFirestore.collection(FirebaseConstant.userCollection);
 
-  void signInWithGoogle() async {
+  CollectionReference get _users =>
+      _firebaseFirestore.collection(FirebaseConstant.userCollection);
+
+  FutureEither<UserModel> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       final googleAuth = await googleUser?.authentication;
@@ -43,21 +47,24 @@ class AuthRepository {
       UserCredential userCredential = await _auth.signInWithCredential(
         credential,
       );
-      UserModel userModel = UserModel(
-        name: userCredential.user!.displayName ?? 'No Name',
-        profilePic: userCredential.user!.photoURL ?? Constants.avatarDefault,
-        banner: Constants.bannerDefault,
-        uid: userCredential.user!.uid,
-        isAuthenticated: true,
-        karma: 0,
-        awards: [],
-      );
-      
-      await _users.doc(userCredential.user!.uid).set({
-        userModel.toMap()
-      });
+      late UserModel userModel;
+      if (userCredential.additionalUserInfo!.isNewUser) {
+        userModel = UserModel(
+          name: userCredential.user!.displayName ?? 'No Name',
+          profilePic: userCredential.user!.photoURL ?? Constants.avatarDefault,
+          banner: Constants.bannerDefault,
+          uid: userCredential.user!.uid,
+          isAuthenticated: true,
+          karma: 0,
+          awards: [],
+        );
+        await _users.doc(userCredential.user!.uid).set({userModel.toMap()});
+      }
+      return right(userModel);
+    } on FirebaseException catch (e){
+      throw e.message!;
     } catch (e) {
-      print(e);
+      return left(Failure(e.toString()));
     }
   }
 }
