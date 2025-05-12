@@ -33,7 +33,7 @@ class CommunityRepository {
     }
   }
 
-  Stream<List<Community>> getUsersCommunity(String uid){
+  Stream<List<Community>> getUserCommunity(String uid){
     return _communities.where('members', arrayContains: uid).snapshots().map((event) {
       List<Community> communities = [];
       for(var doc in event.docs){

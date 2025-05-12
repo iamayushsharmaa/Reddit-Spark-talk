@@ -7,13 +7,19 @@ import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart'
 import 'package:spark_talk_reddit/features/community/repository/community_repository.dart';
 import 'package:spark_talk_reddit/models/community_model.dart';
 
-final communityControllerProvider = StateNotifierProvider<CommunityController, bool>((ref) {
-  final communityRepository = ref.read(communityRepositoryProvider);
-  return CommunityController(
-    communityRepository: communityRepository,
-    ref: ref,
-  );
+final userCommunitiesProvider = StreamProvider((ref) {
+  final communitiesController = ref.watch(communityControllerProvider.notifier);
+  return communitiesController.getUserCommunities();
 });
+
+final communityControllerProvider =
+    StateNotifierProvider<CommunityController, bool>((ref) {
+      final communityRepository = ref.read(communityRepositoryProvider);
+      return CommunityController(
+        communityRepository: communityRepository,
+        ref: ref,
+      );
+    });
 
 class CommunityController extends StateNotifier<bool> {
   final CommunityRepository _communityRepository;
@@ -44,5 +50,10 @@ class CommunityController extends StateNotifier<bool> {
       showSnackBar(context, 'Community created successfully');
       Routemaster.of(context).pop();
     });
+  }
+
+  Stream<List<Community>> getUserCommunities() {
+    final uid = _ref.read(userProvider)!.uid;
+    return _communityRepository.getUserCommunity(uid);
   }
 }
