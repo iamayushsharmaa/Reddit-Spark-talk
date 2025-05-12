@@ -4,12 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/controller/auth_controller.dart';
 import '../constant/constants.dart';
 
-
 class SignInButton extends ConsumerWidget {
   const SignInButton({super.key});
 
-  void signInWithGoogle(BuildContext context, WidgetRef ref){
-    ref.read(authControllerProvider).signInWithGoogle(context);
+  void signInWithGoogle(BuildContext context, WidgetRef ref) {
+    ref.read(authControllerProvider.notifier).signInWithGoogle(context);
   }
 
   @override
@@ -17,14 +16,11 @@ class SignInButton extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.all(18.0),
       child: ElevatedButton.icon(
-        onPressed: () => signInWithGoogle(context,ref),
+        onPressed: () => signInWithGoogle(context, ref),
         icon: Image.asset(Constants.google, width: 35),
         label: Text(
           'Continue with Google',
-          style: TextStyle(
-            fontSize: 17,
-            color: Colors.black,
-          ),
+          style: TextStyle(fontSize: 17, color: Colors.black),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.grey[50],
