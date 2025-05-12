@@ -18,8 +18,7 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-
-class MyApp extends  ConsumerStatefulWidget{
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
@@ -27,15 +26,16 @@ class MyApp extends  ConsumerStatefulWidget{
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-
   UserModel? userModel;
 
-  void getUserData(WidgetRef ref, User data) async{
-    userModel = await ref.watch(authControllerProvider.notifier).getUserData(userModel!.uid).first;
-    ref.read(userProvider.notifier).update((state) => userModel,);
-    setState(() {
-
-    });
+  void getUserData(WidgetRef ref, User data) async {
+    userModel =
+        await ref
+            .watch(authControllerProvider.notifier)
+            .getUserData(userModel!.uid)
+            .first;
+    ref.read(userProvider.notifier).update((state) => userModel);
+    setState(() {});
   }
 
   @override
@@ -43,26 +43,26 @@ class _MyAppState extends ConsumerState<MyApp> {
     return ref
         .watch(authStateChangeProvider)
         .when(
-      data:
-          (data) => MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        theme: Pallete.darkModeAppTheme,
-        routerDelegate: RoutemasterDelegate(
-          routesBuilder: (context) {
-            if (data != null) {
-              getUserData(ref, data);
-              if (userModel != null) {
-                return loggedInRoute;
-              }
-            }
-            return loggedOutRoute;
-          },
-        ),
-        routeInformationParser: const RoutemasterParser(),
-      ),
-      error: (error, stackTrace) => ErrorText(error: error.toString()),
-      loading: () => const Loader(),
-    );;
+          data:
+              (data) => MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                theme: Pallete.darkModeAppTheme,
+                routerDelegate: RoutemasterDelegate(
+                  routesBuilder: (context) {
+                    if (data != null) {
+                      getUserData(ref, data);
+                      if (userModel != null) {
+                        return loggedInRoute;
+                      }
+                    }
+                    return loggedOutRoute;
+                  },
+                ),
+                routeInformationParser: const RoutemasterParser(),
+              ),
+          error: (error, stackTrace) => ErrorText(error: error.toString()),
+          loading: () => const Loader(),
+        );
+    ;
   }
 }
-
