@@ -13,7 +13,7 @@ import '../../../core/providers/firebase_providers.dart';
 
 final authRepositoryProvider = Provider(
   (ref) => AuthRepository(
-    firebaseFirestore: ref.read(firebaseFirestoreProvider),
+    firebaseFirestore: ref.read(firestoreProvider),
     auth: ref.read(authProvider),
     googleSignIn: ref.read(googleSignInProvider),
   ),
