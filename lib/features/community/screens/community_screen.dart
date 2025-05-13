@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:routemaster/routemaster.dart';
 import 'package:spark_talk_reddit/core/common/error_text.dart';
 import 'package:spark_talk_reddit/core/common/loader.dart';
 import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart';
@@ -9,6 +10,10 @@ class CommunityScreen extends ConsumerWidget {
   final String name;
 
   const CommunityScreen({super.key, required this.name});
+
+  void navigateToModTools(BuildContext context) {
+    Routemaster.of(context).push('/mod-tools/$name');
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -84,7 +89,9 @@ class CommunityScreen extends ConsumerWidget {
                                           horizontal: 25,
                                         ),
                                       ),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        navigateToModTools(context);
+                                      },
                                       child: Text(
                                         community.members.contains(user.uid)
                                             ? 'Joined'

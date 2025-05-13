@@ -60,10 +60,11 @@ class AuthRepository {
           karma: 0,
           awards: [],
         );
-        await _users.doc(userCredential.user!.uid).set({userModel.toMap()});
+        await _users.doc(userCredential.user!.uid).set(userModel.toMap());
       } else {
         userModel = await getUserData(userCredential.user!.uid).first;
       }
+      print("User repo: $userModel");
       return right(userModel);
     } on FirebaseException catch (e) {
       throw e.message!;

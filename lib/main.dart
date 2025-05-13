@@ -22,20 +22,18 @@ class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  ConsumerState<MyApp> createState() => _MyAppState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _MyAppState();
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
   UserModel? userModel;
 
   void getUserData(WidgetRef ref, User data) async {
-    userModel =
-        await ref
-            .watch(authControllerProvider.notifier)
-            .getUserData(data.uid)
-            .first;
+    userModel = await ref
+        .watch(authControllerProvider.notifier)
+        .getUserData(data.uid)
+        .first;
     ref.read(userProvider.notifier).update((state) => userModel);
-    setState(() {});
   }
 
   @override
@@ -63,6 +61,5 @@ class _MyAppState extends ConsumerState<MyApp> {
           error: (error, stackTrace) => ErrorText(error: error.toString()),
           loading: () => const Loader(),
         );
-    ;
   }
 }
