@@ -10,6 +10,8 @@ import 'package:spark_talk_reddit/core/utils.dart';
 import 'package:spark_talk_reddit/features/community/controller/community_controller.dart';
 import 'package:spark_talk_reddit/theme/pallete.dart';
 
+import '../../../models/community_model.dart';
+
 class EditCommunityScreen extends ConsumerStatefulWidget {
   final String name;
 
@@ -44,6 +46,17 @@ class _EditCommunityScreenState extends ConsumerState<EditCommunityScreen> {
     }
   }
 
+  void save(Community community) {
+    ref
+        .read(communityControllerProvider.notifier)
+        .editCommunity(
+          profileFile: profileFile,
+          bannerFile: bannerFile,
+          context: context,
+          community: community,
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ref
@@ -56,7 +69,12 @@ class _EditCommunityScreenState extends ConsumerState<EditCommunityScreen> {
                 appBar: AppBar(
                   title: const Text('Edit Community'),
                   centerTitle: false,
-                  actions: [TextButton(onPressed: () {}, child: Text('Save'))],
+                  actions: [
+                    TextButton(
+                      onPressed: () => save(community),
+                      child: Text('Save'),
+                    ),
+                  ],
                 ),
                 body: Padding(
                   padding: const EdgeInsets.all(8.0),
