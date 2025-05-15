@@ -72,7 +72,7 @@ class CommunityRepository {
                   ? null
                   : query.substring(0, query.length - 1) +
                       String.fromCharCode(
-                        query.codeUnitAt(query.length - 1) - 1,
+                        query.codeUnitAt(query.length - 1) + 1,
                       ),
         )
         .snapshots()

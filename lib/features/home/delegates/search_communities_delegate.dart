@@ -6,7 +6,7 @@ import 'package:spark_talk_reddit/core/common/loader.dart';
 import 'package:spark_talk_reddit/features/community/controller/community_controller.dart';
 
 class SearchCommunityDelegate extends SearchDelegate {
-  final Ref ref;
+  final WidgetRef ref;
 
   SearchCommunityDelegate(this.ref);
 
@@ -21,7 +21,6 @@ class SearchCommunityDelegate extends SearchDelegate {
       ),
     ];
   }
-
   @override
   Widget? buildLeading(BuildContext context) {
     return null;

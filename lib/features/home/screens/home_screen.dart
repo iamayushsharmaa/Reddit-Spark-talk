@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart';
+import 'package:spark_talk_reddit/features/home/delegates/search_communities_delegate.dart';
 import 'package:spark_talk_reddit/features/home/drawers/community_list_drawer.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  void displayDrawer(BuildContext context){
+  void displayDrawer(BuildContext context) {
     Scaffold.of(context).openDrawer();
   }
 
@@ -20,28 +21,29 @@ class HomeScreen extends ConsumerWidget {
         leading: Builder(
           builder: (context) {
             return IconButton(
-                onPressed:() => displayDrawer(context),
-                icon: const Icon(Icons.menu)
+              onPressed: () => displayDrawer(context),
+              icon: const Icon(Icons.menu),
             );
-          }
+          },
         ),
         actions: [
           IconButton(
-              onPressed:() {},
-              icon: const Icon(Icons.search)
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: SearchCommunityDelegate(ref),
+              );
+            },
+            icon: const Icon(Icons.search),
           ),
           IconButton(
             onPressed: () {},
-            icon: CircleAvatar(
-              backgroundImage: NetworkImage(user.profilePic),
-            ),
-          )
+            icon: CircleAvatar(backgroundImage: NetworkImage(user.profilePic)),
+          ),
         ],
       ),
       drawer: CommunityListDrawer(),
-      body: Center(
-        child: Text(user.name),
-      ),
+      body: Center(child: Text(user.name)),
     );
   }
 }
