@@ -3,12 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart';
 import 'package:spark_talk_reddit/features/home/delegates/search_communities_delegate.dart';
 import 'package:spark_talk_reddit/features/home/drawers/community_list_drawer.dart';
+import 'package:spark_talk_reddit/features/home/drawers/profile_drawer.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   void displayDrawer(BuildContext context) {
     Scaffold.of(context).openDrawer();
+  }
+
+  void displayEndDrawer(BuildContext context) {
+    Scaffold.of(context).openEndDrawer();
   }
 
   @override
@@ -37,13 +42,13 @@ class HomeScreen extends ConsumerWidget {
             icon: const Icon(Icons.search),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () => displayEndDrawer(context),
             icon: CircleAvatar(backgroundImage: NetworkImage(user.profilePic)),
           ),
         ],
       ),
-      drawer: CommunityListDrawer(),
-      body: Center(child: Text(user.name)),
+      drawer: const CommunityListDrawer(),
+      endDrawer: const ProfileDrawer(),
     );
   }
 }
