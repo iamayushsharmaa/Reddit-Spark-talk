@@ -22,44 +22,56 @@ class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _MyAppState();
+  ConsumerState<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-  UserModel? userModel;
-
-  void getUserData(WidgetRef ref, User data) async {
-    userModel = await ref
-        .watch(authControllerProvider.notifier)
-        .getUserData(data.uid)
-        .first;
-    ref.read(userProvider.notifier).update((state) => userModel);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ref
-        .watch(authStateChangeProvider)
-        .when(
-          data:
-              (data) => MaterialApp.router(
-                debugShowCheckedModeBanner: false,
-                theme: Pallete.darkModeAppTheme,
-                routerDelegate: RoutemasterDelegate(
-                  routesBuilder: (context) {
-                    if (data != null) {
-                      getUserData(ref, data);
-                      if (userModel != null) {
-                        return loggedInRoute;
-                      }
-                    }
-                    return loggedOutRoute;
-                  },
-                ),
-                routeInformationParser: const RoutemasterParser(),
-              ),
-          error: (error, stackTrace) => ErrorText(error: error.toString()),
-          loading: () => const Loader(),
-        );
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      theme: Pallete.darkModeAppTheme,
+      routerDelegate: RoutemasterDelegate(
+        routesBuilder: (context) {
+          final authState = ref.watch(authStateChangeProvider);
+          return authState.when(
+            data: (user) {
+              if (user == null) {
+                return loggedOutRoute;
+              } else {
+                final userData = ref.watch(userProvider);
+                if (userData == null) {
+                  // Fetch user data and navigate when ready
+                  ref
+                      .read(authControllerProvider.notifier)
+                      .getUserData(user.uid)
+                      .first
+                      .then((userModel) {
+                    ref.read(userProvider.notifier).update((state) => userModel);
+                    Routemaster.of(context).replace('/');
+                  }).catchError((error) {
+                    Routemaster.of(context).replace('/error?message=$error');
+                  });
+                  return RouteMap(
+                    routes: {'/': (_) => const MaterialPage(child: Loader())},
+                  );
+                }
+                // User is authenticated and user data is available
+                return loggedInRoute;
+              }
+            },
+            error: (error, stackTrace) => RouteMap(
+              routes: {
+                '/': (_) => MaterialPage(child: ErrorText(error: error.toString())),
+              },
+            ),
+            loading: () => RouteMap(
+              routes: {'/': (_) => const MaterialPage(child: Loader())},
+            ),
+          );
+        },
+      ),
+      routeInformationParser: const RoutemasterParser(),
+    );
   }
 }
