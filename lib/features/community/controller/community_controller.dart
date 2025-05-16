@@ -111,9 +111,20 @@ class CommunityController extends StateNotifier<bool> {
         (r) => community.copyWith(banner: r),
       );
     }
-
     final res = await _communityRepository.editCommunity(community);
     state = false;
+    res.fold(
+      (l) => showSnackBar(context, l.message),
+      (r) => Routemaster.of(context).pop(),
+    );
+  }
+
+  void addMods(
+    String communityName,
+    List<String> uids,
+    BuildContext context,
+  ) async {
+    final res = await _communityRepository.addMods(communityName, uids);
     res.fold(
       (l) => showSnackBar(context, l.message),
       (r) => Routemaster.of(context).pop(),
@@ -124,21 +135,27 @@ class CommunityController extends StateNotifier<bool> {
     final userId = _ref.read(userProvider)!;
 
     Either<Failure, void> res;
-    if(community.members.contains(userId.uid)){
-     res = await _communityRepository.leaveCommunity(community.name, userId.uid);
+    if (community.members.contains(userId.uid)) {
+      res = await _communityRepository.leaveCommunity(
+        community.name,
+        userId.uid,
+      );
     } else {
-      res = await _communityRepository.joinCommunity(community.name, userId.uid);
+      res = await _communityRepository.joinCommunity(
+        community.name,
+        userId.uid,
+      );
     }
     res.fold((l) => showSnackBar(context, l.message), (r) {
-      if(community.members.contains(userId.uid)){
+      if (community.members.contains(userId.uid)) {
         showSnackBar(context, 'Community left successfully');
       } else {
         showSnackBar(context, 'Community joined successfully');
       }
-    },);
+    });
   }
 
-  Stream<List<Community>> searchCommunity(String query){
+  Stream<List<Community>> searchCommunity(String query) {
     return _communityRepository.searchCommunity(query);
   }
 }

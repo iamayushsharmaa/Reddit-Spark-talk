@@ -16,59 +16,77 @@ class AddModScreen extends ConsumerStatefulWidget {
 
 class _AddModScreenState extends ConsumerState<AddModScreen> {
   Set<String> uids = {};
+  int counter = 0;
 
-  void addUids(String uid){
+  void addUids(String uid) {
     setState(() {
       uids.add(uid);
     });
   }
 
-  void removeUids(String uid){
+  void removeUids(String uid) {
     setState(() {
       uids.remove(uid);
     });
   }
+
+  void saveMods() {
+    ref
+        .read(communityControllerProvider.notifier)
+        .addMods(widget.name, uids.toList(), context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Mod'),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.done))],
+        actions: [
+          IconButton(
+              onPressed: () => saveMods(),
+              icon: Icon(Icons.done)
+          ),
+        ],
       ),
       body: ref
           .watch(getCommunityByNameProvider(widget.name))
           .when(
-        data: (community) =>
-            ListView.builder(
-              itemCount: community.members.length,
-              itemBuilder: (context, index) {
-                final member = community.members[index];
-                return ref.watch(getUserDataProvider(member)).when(
-                  data: (user) {
-                    if(community.mods.contains(member)){
-                      uids.add(member);
-                    }
-                    return CheckboxListTile(
-                      value: uids.contains(user.uid),
-                      onChanged: (value) {
-                        if(value!){
-                          addUids(member);
-                        } else {
-                          removeUids(member);
-                        }
-                      },
-                      title: Text(member),
-                    );
+            data:
+                (community) => ListView.builder(
+                  itemCount: community.members.length,
+                  itemBuilder: (context, index) {
+                    final member = community.members[index];
+                    return ref
+                        .watch(getUserDataProvider(member))
+                        .when(
+                          data: (user) {
+                            if (community.mods.contains(member) &&
+                                counter == 0) {
+                              uids.add(member);
+                            }
+                            counter++;
+                            return CheckboxListTile(
+                              value: uids.contains(user.uid),
+                              onChanged: (value) {
+                                if (value!) {
+                                  addUids(user.uid);
+                                } else {
+                                  removeUids(user.uid);
+                                }
+                              },
+                              title: Text(member),
+                            );
+                          },
+                          error:
+                              (error, stackTrace) =>
+                                  ErrorText(error: error.toString()),
+                          loading: () => const Loader(),
+                        );
                   },
-                  error: (error, stackTrace) =>
-                      ErrorText(error: error.toString()),
-                  loading: () => const Loader(),);
-              },
-            )
-        ,
-        error: (error, stackTrace) => ErrorText(error: error.toString()),
-        loading: () => const Loader(),
-      ),
+                ),
+            error: (error, stackTrace) => ErrorText(error: error.toString()),
+            loading: () => const Loader(),
+          ),
     );
   }
 }
