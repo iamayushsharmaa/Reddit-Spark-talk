@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:spark_talk_reddit/features/auth/screens/login_screen.dart';
+import 'package:spark_talk_reddit/features/community/screens/add_mod_screen.dart';
 import 'package:spark_talk_reddit/features/community/screens/community_screen.dart';
 import 'package:spark_talk_reddit/features/community/screens/create_community_screen.dart';
 import 'package:spark_talk_reddit/features/community/screens/edit_community_screen.dart';
@@ -27,6 +28,10 @@ final loggedInRoute = RouteMap(
     '/mod-community/:name':
         (routeData) => MaterialPage(
           child: EditCommunityScreen(name: routeData.pathParameters['name']!),
+        ),
+    '/add-mod/:name':
+        (routeData) => MaterialPage(
+          child: AddModScreen(name: routeData.pathParameters['name']!),
         ),
   },
 );
