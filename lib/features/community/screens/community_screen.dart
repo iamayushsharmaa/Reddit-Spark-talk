@@ -5,6 +5,7 @@ import 'package:spark_talk_reddit/core/common/error_text.dart';
 import 'package:spark_talk_reddit/core/common/loader.dart';
 import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart';
 import 'package:spark_talk_reddit/features/community/controller/community_controller.dart';
+import 'package:spark_talk_reddit/models/community_model.dart';
 
 class CommunityScreen extends ConsumerWidget {
   final String name;
@@ -13,6 +14,10 @@ class CommunityScreen extends ConsumerWidget {
 
   void navigateToModTools(BuildContext context) {
     Routemaster.of(context).push('/mod-tools/$name');
+  }
+
+  void joinCommunity(WidgetRef ref, Community community, BuildContext context){
+    ref.read(communityControllerProvider.notifier).joinCommunity(community, context);
   }
 
   @override
@@ -75,7 +80,9 @@ class CommunityScreen extends ConsumerWidget {
                                           horizontal: 25,
                                         ),
                                       ),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        navigateToModTools(context);
+                                      },
                                       child: Text('Mod tools'),
                                     )
                                     : OutlinedButton(
@@ -90,7 +97,7 @@ class CommunityScreen extends ConsumerWidget {
                                         ),
                                       ),
                                       onPressed: () {
-                                        navigateToModTools(context);
+                                        joinCommunity(ref, community, context);
                                       },
                                       child: Text(
                                         community.members.contains(user.uid)

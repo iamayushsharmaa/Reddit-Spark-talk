@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:spark_talk_reddit/core/constant/constants.dart';
 import 'package:spark_talk_reddit/core/providers/storage_repository.dart';
@@ -9,6 +10,8 @@ import 'package:spark_talk_reddit/core/utils.dart';
 import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart';
 import 'package:spark_talk_reddit/features/community/repository/community_repository.dart';
 import 'package:spark_talk_reddit/models/community_model.dart';
+
+import '../../../core/failure.dart';
 
 final userCommunitiesProvider = StreamProvider((ref) {
   final communitiesController = ref.watch(communityControllerProvider.notifier);
@@ -115,6 +118,24 @@ class CommunityController extends StateNotifier<bool> {
       (l) => showSnackBar(context, l.message),
       (r) => Routemaster.of(context).pop(),
     );
+  }
+
+  void joinCommunity(Community community, BuildContext context) async {
+    final userId = _ref.read(userProvider)!;
+
+    Either<Failure, void> res;
+    if(community.members.contains(userId.uid)){
+     res = await _communityRepository.leaveCommunity(community.name, userId.uid);
+    } else {
+      res = await _communityRepository.joinCommunity(community.name, userId.uid);
+    }
+    res.fold((l) => showSnackBar(context, l.message), (r) {
+      if(community.members.contains(userId.uid)){
+        showSnackBar(context, 'Community left successfully');
+      } else {
+        showSnackBar(context, 'Community joined successfully');
+      }
+    },);
   }
 
   Stream<List<Community>> searchCommunity(String query){

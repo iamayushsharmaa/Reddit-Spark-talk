@@ -89,7 +89,7 @@ class CommunityRepository {
 
   FutureVoid joinCommunity(String communityName, String userId) async {
     try {
-      return right(await _communities.doc(communityName).update({
+      return right(_communities.doc(communityName).update({
         'members': FieldValue.arrayUnion([userId]),
       }));
     } on FirebaseException catch (e) {
@@ -101,7 +101,7 @@ class CommunityRepository {
 
   FutureVoid leaveCommunity(String communityName, String userId) async {
     try {
-      return right(await _communities.doc(communityName).update({
+      return right(_communities.doc(communityName).update({
         'members': FieldValue.arrayRemove([userId]),
       }));
     } on FirebaseException catch (e) {
