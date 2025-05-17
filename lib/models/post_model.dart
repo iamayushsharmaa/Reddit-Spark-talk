@@ -68,6 +68,7 @@ class Post {
   final DateTime createdAt;
   final List<String> awards;
 
+
   Map<String, dynamic> toMap() {
     return {
       'id': this.id,
