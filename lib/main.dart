@@ -30,7 +30,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      theme: Pallete.darkModeAppTheme,
+      theme: ref.watch(themeNotifierProvider),
       routerDelegate: RoutemasterDelegate(
         routesBuilder: (context) {
           final authState = ref.watch(authStateChangeProvider);

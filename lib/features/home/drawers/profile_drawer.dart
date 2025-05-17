@@ -7,11 +7,16 @@ import 'package:spark_talk_reddit/theme/pallete.dart';
 class ProfileDrawer extends ConsumerWidget {
   const ProfileDrawer({super.key});
 
-  void logOut(WidgetRef ref){
+  void logOut(WidgetRef ref) {
     ref.watch(authControllerProvider.notifier).logOut();
   }
-  void navigateToProfile(BuildContext context, String uid){
+
+  void navigateToProfile(BuildContext context, String uid) {
     Routemaster.of(context).push('/u/${uid}');
+  }
+
+  void toggleTheme(WidgetRef ref) {
+    ref.read(themeNotifierProvider.notifier).toggleTheme();
   }
 
   @override
@@ -44,7 +49,12 @@ class ProfileDrawer extends ConsumerWidget {
               title: const Text('Log Out'),
               onTap: () => logOut(ref),
             ),
-            Switch.adaptive(value: true, onChanged: (value) {}),
+            Switch.adaptive(
+              value:
+                  ref.watch(themeNotifierProvider.notifier).mode ==
+                  ThemeMode.dark,
+              onChanged: (value) => toggleTheme(ref),
+            ),
           ],
         ),
       ),
