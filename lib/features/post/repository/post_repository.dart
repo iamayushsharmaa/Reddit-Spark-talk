@@ -6,6 +6,7 @@ import 'package:spark_talk_reddit/core/failure.dart';
 import 'package:spark_talk_reddit/core/providers/firebase_providers.dart';
 import 'package:spark_talk_reddit/core/type_defs.dart';
 
+import '../../../models/community_model.dart';
 import '../../../models/post_model.dart';
 
 final postRepositoryProvider = Provider((ref) {
@@ -29,5 +30,21 @@ class PostRepository {
     } catch (e) {
       return left(Failure(e.toString()));
     }
+  }
+
+  Stream<List<Post>> fetchUserPost(List<Community> communities) {
+    return _post
+        .where(
+          'communityName',
+          whereIn: communities.map((e) => e.name,).toList(),
+        )
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (event) =>
+              event.docs
+                  .map((e) => Post.fromMap(e.data() as Map<String, dynamic>),)
+                  .toList(),
+        );
   }
 }

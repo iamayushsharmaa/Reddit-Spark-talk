@@ -12,8 +12,9 @@ import '../../../core/providers/storage_repository.dart';
 import '../../../models/community_model.dart';
 import '../repository/post_repository.dart';
 
-final postControllerProvider =
-StateNotifierProvider<PostController, bool>((ref) {
+final postControllerProvider = StateNotifierProvider<PostController, bool>((
+  ref,
+) {
   final postRepository = ref.read(postRepositoryProvider);
   final storageRepository = ref.read(storageRepositoryProvider);
   return PostController(
@@ -23,6 +24,11 @@ StateNotifierProvider<PostController, bool>((ref) {
   );
 });
 
+final userPostsProvider = StreamProvider.family((ref, List<Community> communities) {
+  final postController = ref.watch(postControllerProvider.notifier);
+
+  return postController.fetchUserPost(communities);
+});
 
 class PostController extends StateNotifier<bool> {
   final PostRepository _postRepository;
@@ -151,5 +157,12 @@ class PostController extends StateNotifier<bool> {
         Routemaster.of(context).pop();
       });
     });
+  }
+
+  Stream<List<Post>> fetchUserPost(List<Community> communities) {
+    if (communities.isNotEmpty) {
+      return _postRepository.fetchUserPost(communities);
+    }
+    return Stream.value([]);
   }
 }
