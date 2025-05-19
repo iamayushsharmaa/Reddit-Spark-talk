@@ -1,7 +1,11 @@
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:routemaster/routemaster.dart';
+import 'package:spark_talk_reddit/core/common/error_text.dart';
+import 'package:spark_talk_reddit/core/common/loader.dart';
 import 'package:spark_talk_reddit/core/constant/constants.dart';
+import 'package:spark_talk_reddit/features/community/controller/community_controller.dart';
 import 'package:spark_talk_reddit/features/post/controller/post_controller.dart';
 import 'package:spark_talk_reddit/models/post_model.dart';
 
@@ -19,6 +23,18 @@ class PostCard extends ConsumerWidget {
 
   void upVotes(WidgetRef ref) {
     ref.read(postControllerProvider.notifier).upvote(post);
+  }
+
+  void downVotes(WidgetRef ref) {
+    ref.read(postControllerProvider.notifier).downvote(post);
+  }
+
+  void navigateToUser(BuildContext context) {
+    Routemaster.of(context).push('/u/${post.uid}');
+  }
+
+  void navigateToCommunity(BuildContext context) {
+    Routemaster.of(context).push('/u/${post.communityName}');
   }
 
   @override
@@ -54,9 +70,12 @@ class PostCard extends ConsumerWidget {
                             children: [
                               Row(
                                 children: [
-                                  CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                      post.communityProfilePic,
+                                  GestureDetector(
+                                    onTap: () => navigateToCommunity(context),
+                                    child: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                        post.communityProfilePic,
+                                      ),
                                     ),
                                   ),
                                   Padding(
@@ -72,9 +91,12 @@ class PostCard extends ConsumerWidget {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        Text(
-                                          'r/${post.username}',
-                                          style: TextStyle(fontSize: 16),
+                                        GestureDetector(
+                                          onTap: () => navigateToUser(context),
+                                          child: Text(
+                                            'r/${post.username}',
+                                            style: TextStyle(fontSize: 16),
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -132,8 +154,8 @@ class PostCard extends ConsumerWidget {
                                 style: TextStyle(color: Colors.grey),
                               ),
                             ),
-
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Row(
                                 children: [
@@ -153,7 +175,7 @@ class PostCard extends ConsumerWidget {
                                     style: const TextStyle(fontSize: 17),
                                   ),
                                   IconButton(
-                                    onPressed: () {},
+                                    onPressed: () => downVotes(ref),
                                     icon: Icon(
                                       Constants.down,
                                       size: 30,
@@ -177,6 +199,31 @@ class PostCard extends ConsumerWidget {
                                   ),
                                 ],
                               ),
+                              ref
+                                  .watch(
+                                    getCommunityByNameProvider(
+                                      post.communityName,
+                                    ),
+                                  )
+                                  .when(
+                                    data: (data) {
+                                      if (data.mods.contains(user.uid)) {
+                                        return IconButton(
+                                          onPressed:
+                                              () => deletePost(ref, context),
+                                          icon: Icon(
+                                            Icons.admin_panel_settings,
+                                          ),
+                                        );
+                                      } else {
+                                        return const SizedBox();
+                                      }
+                                    },
+                                    error:
+                                        (err, stack) =>
+                                            ErrorText(error: err.toString()),
+                                    loading: () => const Loader(),
+                                  ),
                             ],
                           ),
                         ],

@@ -183,4 +183,10 @@ class PostController extends StateNotifier<bool> {
 
     _postRepository.upvotePost(post, userId);
   }
+
+  void downvote(Post post) async {
+    final userId = _ref.watch(userProvider)!.uid;
+
+    _postRepository.downvotePost(post, userId);
+  }
 }
