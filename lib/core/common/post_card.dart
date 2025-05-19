@@ -13,8 +13,12 @@ class PostCard extends ConsumerWidget {
 
   const PostCard({super.key, required this.post});
 
-  void deletePost(WidgetRef ref) {
-    ref.read(postControllerProvider.notifier).deletePost(post);
+  void deletePost(WidgetRef ref, BuildContext context) {
+    ref.read(postControllerProvider.notifier).deletePost(post, context);
+  }
+
+  void upVotes(WidgetRef ref) {
+    ref.read(postControllerProvider.notifier).upvote(post);
   }
 
   @override
@@ -79,7 +83,7 @@ class PostCard extends ConsumerWidget {
                               ),
                               if (post.uid == user.uid)
                                 IconButton(
-                                  onPressed: () => deletePost(ref),
+                                  onPressed: () => deletePost(ref, context),
                                   icon: Icon(
                                     Icons.delete,
                                     color: Pallete.redColor,
@@ -107,9 +111,10 @@ class PostCard extends ConsumerWidget {
                               ),
                             ),
                           if (isTypeLink)
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.35,
-                              width: double.infinity,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                              ),
                               child: AnyLinkPreview(
                                 displayDirection:
                                     UIDirection.uiDirectionHorizontal,
@@ -133,7 +138,7 @@ class PostCard extends ConsumerWidget {
                               Row(
                                 children: [
                                   IconButton(
-                                    onPressed: () {},
+                                    onPressed: () => upVotes(ref),
                                     icon: Icon(
                                       Constants.up,
                                       size: 30,

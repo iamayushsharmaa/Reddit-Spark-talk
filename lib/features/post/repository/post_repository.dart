@@ -36,25 +36,42 @@ class PostRepository {
     return _post
         .where(
           'communityName',
-          whereIn: communities.map((e) => e.name,).toList(),
+          whereIn: communities.map((e) => e.name).toList(),
         )
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map(
           (event) =>
               event.docs
-                  .map((e) => Post.fromMap(e.data() as Map<String, dynamic>),)
+                  .map((e) => Post.fromMap(e.data() as Map<String, dynamic>))
                   .toList(),
         );
   }
 
-  FutureVoid deletePost(Post post) async{
+  FutureVoid deletePost(Post post) async {
     try {
       return right(_post.doc(post.id).delete());
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
       return left(Failure(e.toString()));
+    }
+  }
+
+  void upvotePost(Post post, String userId) async {
+    if (post.downvotes.contains(userId)) {
+      _post.doc(post.id).update({
+        'downvotes': FieldValue.arrayRemove([userId]),
+      });
+    }
+    if (post.upvotes.contains(userId)) {
+      _post.doc(post.id).update({
+        'upvotes': FieldValue.arrayRemove([userId]),
+      });
+    } else {
+      _post.doc(post.id).update({
+        'upvotes': FieldValue.arrayUnion([userId]),
+      });
     }
   }
 }
