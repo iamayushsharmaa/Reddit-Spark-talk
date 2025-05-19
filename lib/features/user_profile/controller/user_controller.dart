@@ -7,19 +7,23 @@ import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart'
 
 import '../../../core/providers/storage_repository.dart';
 import '../../../core/utils.dart';
+import '../../../models/post_model.dart';
 import '../../../models/user_model.dart';
 import '../repository/user_repository.dart';
 
-final userProfileControllerProvider = StateNotifierProvider<UserProfileController, bool>((
-  ref,
-) {
-  final userProfileRepository = ref.read(userProfileRepositoryProvider);
-  final storageRepository = ref.read(storageRepositoryProvider);
-  return UserProfileController(
-    userProfileRepository: userProfileRepository,
-    storageRepository: storageRepository,
-    ref: ref,
-  );
+final userProfileControllerProvider =
+    StateNotifierProvider<UserProfileController, bool>((ref) {
+      final userProfileRepository = ref.read(userProfileRepositoryProvider);
+      final storageRepository = ref.read(storageRepositoryProvider);
+      return UserProfileController(
+        userProfileRepository: userProfileRepository,
+        storageRepository: storageRepository,
+        ref: ref,
+      );
+    });
+
+final getUserPostsProvider = StreamProvider.family((ref, String uid) {
+  return ref.read(userProfileControllerProvider.notifier).getUserPosts(uid);
 });
 
 class UserProfileController extends StateNotifier<bool> {
@@ -75,5 +79,9 @@ class UserProfileController extends StateNotifier<bool> {
       _ref.read(userProvider.notifier).update((state) => user);
       Routemaster.of(context).pop();
     });
+  }
+
+  Stream<List<Post>> getUserPosts(String uid) {
+    return _userRepository.getUserPosts(uid);
   }
 }

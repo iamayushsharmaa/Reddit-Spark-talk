@@ -7,6 +7,8 @@ import 'package:spark_talk_reddit/core/providers/firebase_providers.dart';
 import 'package:spark_talk_reddit/core/type_defs.dart';
 import 'package:spark_talk_reddit/models/community_model.dart';
 
+import '../../../models/post_model.dart';
+
 final communityRepositoryProvider = Provider(
   (ref) => CommunityRepository(firestore: ref.read(firestoreProvider)),
 );
@@ -64,9 +66,7 @@ class CommunityRepository {
 
   FutureVoid addMods(String communityName, List<String> uids) async {
     try {
-      return right(_communities.doc(communityName).update({
-        'mods': uids
-      }));
+      return right(_communities.doc(communityName).update({'mods': uids}));
     } on FirebaseException catch (e) {
       throw e;
     } catch (e) {
@@ -127,6 +127,22 @@ class CommunityRepository {
     }
   }
 
+  Stream<List<Post>> getCommunityPosts(String name) {
+    return _post
+        .where('communityName', isEqualTo: name)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (event) =>
+              event.docs
+                  .map((e) => Post.fromMap(e.data() as Map<String, dynamic>))
+                  .toList(),
+        );
+  }
+
   CollectionReference get _communities =>
       _firestore.collection(FirebaseConstant.communityCollection);
+
+  CollectionReference get _post =>
+      _firestore.collection(FirebaseConstant.postCollection);
 }

@@ -12,6 +12,7 @@ import 'package:spark_talk_reddit/features/community/repository/community_reposi
 import 'package:spark_talk_reddit/models/community_model.dart';
 
 import '../../../core/failure.dart';
+import '../../../models/post_model.dart';
 
 final userCommunitiesProvider = StreamProvider((ref) {
   final communitiesController = ref.watch(communityControllerProvider.notifier);
@@ -37,6 +38,10 @@ final getCommunityByNameProvider = StreamProvider.family((ref, String name) {
 
 final searchCommunityProvider = StreamProvider.family((ref, String query) {
   return ref.watch(communityControllerProvider.notifier).searchCommunity(query);
+});
+
+final getCommunityPostsProvider = StreamProvider.family((ref, String name) {
+  return ref.read(communityControllerProvider.notifier).getCommunityPosts(name);
 });
 
 class CommunityController extends StateNotifier<bool> {
@@ -157,5 +162,9 @@ class CommunityController extends StateNotifier<bool> {
 
   Stream<List<Community>> searchCommunity(String query) {
     return _communityRepository.searchCommunity(query);
+  }
+
+  Stream<List<Post>> getCommunityPosts(String name) {
+    return _communityRepository.getCommunityPosts(name);
   }
 }

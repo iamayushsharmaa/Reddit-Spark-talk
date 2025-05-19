@@ -7,6 +7,8 @@ import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart'
 import 'package:spark_talk_reddit/features/community/controller/community_controller.dart';
 import 'package:spark_talk_reddit/models/community_model.dart';
 
+import '../../../core/common/post_card.dart';
+
 class CommunityScreen extends ConsumerWidget {
   final String name;
 
@@ -16,8 +18,10 @@ class CommunityScreen extends ConsumerWidget {
     Routemaster.of(context).push('/mod-tools/$name');
   }
 
-  void joinCommunity(WidgetRef ref, Community community, BuildContext context){
-    ref.read(communityControllerProvider.notifier).joinCommunity(community, context);
+  void joinCommunity(WidgetRef ref, Community community, BuildContext context) {
+    ref
+        .read(communityControllerProvider.notifier)
+        .joinCommunity(community, context);
   }
 
   @override
@@ -118,7 +122,23 @@ class CommunityScreen extends ConsumerWidget {
                       ),
                     ];
                   },
-                  body: const Text('Displaying posts'),
+                  body: ref
+                      .watch(getCommunityPostsProvider(name))
+                      .when(
+                        data: (data) {
+                          return ListView.builder(
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              final post = data[index];
+                              return PostCard(post: post);
+                            },
+                          );
+                        },
+                        error:
+                            (error, stackTrace) =>
+                                ErrorText(error: error.toString()),
+                        loading: () => const Loader(),
+                      ),
                 ),
             error: (error, stackTrace) => ErrorText(error: error.toString()),
             loading: () => const Loader(),
