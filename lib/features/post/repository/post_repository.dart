@@ -5,6 +5,7 @@ import 'package:spark_talk_reddit/core/constant/firestore_constants.dart';
 import 'package:spark_talk_reddit/core/failure.dart';
 import 'package:spark_talk_reddit/core/providers/firebase_providers.dart';
 import 'package:spark_talk_reddit/core/type_defs.dart';
+import 'package:spark_talk_reddit/models/comment_model.dart';
 
 import '../../../models/community_model.dart';
 import '../../../models/post_model.dart';
@@ -21,6 +22,9 @@ class PostRepository {
 
   CollectionReference get _post =>
       _firestore.collection(FirebaseConstant.postCollection);
+
+  CollectionReference get _comment =>
+      _firestore.collection(FirebaseConstant.commentsCollection);
 
   FutureVoid addPost(Post post) async {
     try {
@@ -89,6 +93,23 @@ class PostRepository {
       _post.doc(post.id).update({
         'downvotes': FieldValue.arrayUnion([userId]),
       });
+    }
+  }
+
+  Stream<Post> getPostById(String postId) {
+    return _post
+        .doc(postId)
+        .snapshots()
+        .map((event) => Post.fromMap(event.data() as Map<String, dynamic>));
+  }
+
+  FutureVoid addComment(Comment comment) async {
+    try {
+      return right(_comment.doc(comment.id).set(comment.toMap()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
     }
   }
 }

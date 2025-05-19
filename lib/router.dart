@@ -8,6 +8,7 @@ import 'package:spark_talk_reddit/features/community/screens/edit_community_scre
 import 'package:spark_talk_reddit/features/community/screens/mod_tool_screen.dart';
 import 'package:spark_talk_reddit/features/home/screens/home_screen.dart';
 import 'package:spark_talk_reddit/features/post/screens/add_post_type_screen.dart';
+import 'package:spark_talk_reddit/features/post/screens/comment_screen.dart';
 import 'package:spark_talk_reddit/features/user_profile/screens/edit_profile_screen.dart';
 import 'package:spark_talk_reddit/features/user_profile/screens/user_profile_screen.dart';
 
@@ -46,6 +47,9 @@ final loggedInRoute = RouteMap(
         ),
     '/add-post/:type': (routeData) => MaterialPage(
       child: AddPostTypeScreen(type: routeData.pathParameters['type']!),
+    ),
+    '/comment/:postId/comments': (route) => MaterialPage(
+      child: CommentScreen(postId: route.pathParameters['postId']!),
     ),
   },
 );

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:spark_talk_reddit/core/utils.dart';
 import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart';
+import 'package:spark_talk_reddit/models/comment_model.dart';
 import 'package:spark_talk_reddit/models/post_model.dart';
 import 'package:uuid/uuid.dart';
 
@@ -31,6 +32,11 @@ final userPostsProvider = StreamProvider.family((
   final postController = ref.watch(postControllerProvider.notifier);
 
   return postController.fetchUserPost(communities);
+});
+
+final getPostByIdProvider = StreamProvider.family((ref, String postId) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.getPostById(postId);
 });
 
 class PostController extends StateNotifier<bool> {
@@ -178,7 +184,7 @@ class PostController extends StateNotifier<bool> {
     );
   }
 
-  void upvote(Post post) async{
+  void upvote(Post post) async {
     final userId = _ref.watch(userProvider)!.uid;
 
     _postRepository.upvotePost(post, userId);
@@ -188,5 +194,31 @@ class PostController extends StateNotifier<bool> {
     final userId = _ref.watch(userProvider)!.uid;
 
     _postRepository.downvotePost(post, userId);
+  }
+
+  Stream<Post> getPostById(String postId) {
+    return _postRepository.getPostById(postId);
+  }
+
+  void addComment({
+    required BuildContext context,
+    required String text,
+    required Post post,
+  }) async {
+    final user = _ref.read(userProvider)!;
+    String commentId = const Uuid().v1();
+    Comment comment = Comment(
+      id: commentId,
+      comment: text,
+      createdAt: DateTime.now(),
+      postId: post.id,
+      uid: user.uid,
+      username: user.name,
+      profilePic: user.profilePic,
+    );
+
+    final res = await _postRepository.addComment(comment);
+
+    res.fold((l) => showSnackBar(context, l.message), (r) => null);
   }
 }
