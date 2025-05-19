@@ -47,4 +47,14 @@ class PostRepository {
                   .toList(),
         );
   }
+
+  FutureVoid deletePost(Post post) async{
+    try {
+      return right(_post.doc(post.id).delete());
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
 }
