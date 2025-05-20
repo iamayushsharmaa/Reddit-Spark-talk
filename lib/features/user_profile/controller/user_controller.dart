@@ -53,24 +53,24 @@ class UserProfileController extends StateNotifier<bool> {
     state = true;
     UserModel user = _ref.read(userProvider)!;
 
-    if (profileFile != null) {
+    if (profileFile != null || webProfileFile != null) {
       final res = await _storageRepository.storeFile(
         path: 'users/profile',
         id: user.uid,
         file: profileFile,
-        webFile: webProfileFile
+        webFile: webProfileFile,
       );
       res.fold(
         (l) => showSnackBar(context, l.message),
         (r) => user.copyWith(profilePic: r),
       );
     }
-    if (bannerFile != null) {
+    if (bannerFile != null || webBannerFile != null) {
       final res = await _storageRepository.storeFile(
         path: 'users/banner',
         id: user.uid,
         file: bannerFile,
-        webFile: webBannerFile
+        webFile: webBannerFile,
       );
       res.fold(
         (l) => showSnackBar(context, l.message),

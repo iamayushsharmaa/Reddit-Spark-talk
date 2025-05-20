@@ -55,7 +55,7 @@ class _AddPostTypeScreenState extends ConsumerState<AddPostTypeScreen> {
 
   void sharePost() {
     if (widget.type == 'image' &&
-        bannerFile != null &&
+        (bannerFile != null || bannerWebFile != null) &&
         titleController.text.isNotEmpty) {
       ref
           .read(postControllerProvider.notifier)

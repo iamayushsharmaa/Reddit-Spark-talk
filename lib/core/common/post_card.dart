@@ -1,4 +1,5 @@
 import 'package:any_link_preview/any_link_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:routemaster/routemaster.dart';
@@ -57,7 +58,6 @@ class PostCard extends ConsumerWidget {
     final user = ref.watch(userProvider)!;
     final isGuest = !user.isAuthenticated;
 
-
     return Responsive(
       child: Column(
         children: [
@@ -67,7 +67,39 @@ class PostCard extends ConsumerWidget {
             ),
             padding: EdgeInsets.symmetric(vertical: 30),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (kIsWeb)
+                  Column(
+                    children: [
+                      IconButton(
+                        onPressed: isGuest ? () {} : () => upVotes(ref),
+                        icon: Icon(
+                          Constants.up,
+                          size: 30,
+                          color:
+                              post.upvotes.contains(user.uid)
+                                  ? Pallete.redColor
+                                  : null,
+                        ),
+                      ),
+                      Text(
+                        '${post.upvotes.length - post.downvotes.length == 0 ? 'Votes' : post.upvotes.length - post.downvotes.length}',
+                        style: const TextStyle(fontSize: 17),
+                      ),
+                      IconButton(
+                        onPressed: isGuest ? () {} : () => downVotes(ref),
+                        icon: Icon(
+                          Constants.down,
+                          size: 30,
+                          color:
+                              post.downvotes.contains(user.uid)
+                                  ? Pallete.blueColor
+                                  : null,
+                        ),
+                      ),
+                    ],
+                  ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +138,8 @@ class PostCard extends ConsumerWidget {
                                             ),
                                           ),
                                           GestureDetector(
-                                            onTap: () => navigateToUser(context),
+                                            onTap:
+                                                () => navigateToUser(context),
                                             child: Text(
                                               'r/${post.username}',
                                               style: TextStyle(fontSize: 16),
@@ -156,7 +189,8 @@ class PostCard extends ConsumerWidget {
                             ),
                             if (isTypeImage)
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.35,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.35,
                                 width: double.infinity,
                                 child: Image.network(
                                   post.link!,
@@ -188,42 +222,48 @@ class PostCard extends ConsumerWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                if (!kIsWeb)
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed:
+                                            isGuest
+                                                ? () {}
+                                                : () => upVotes(ref),
+                                        icon: Icon(
+                                          Constants.up,
+                                          size: 30,
+                                          color:
+                                              post.upvotes.contains(user.uid)
+                                                  ? Pallete.redColor
+                                                  : null,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${post.upvotes.length - post.downvotes.length == 0 ? 'Votes' : post.upvotes.length - post.downvotes.length}',
+                                        style: const TextStyle(fontSize: 17),
+                                      ),
+                                      IconButton(
+                                        onPressed:
+                                            isGuest
+                                                ? () {}
+                                                : () => downVotes(ref),
+                                        icon: Icon(
+                                          Constants.down,
+                                          size: 30,
+                                          color:
+                                              post.downvotes.contains(user.uid)
+                                                  ? Pallete.blueColor
+                                                  : null,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 Row(
                                   children: [
                                     IconButton(
                                       onPressed:
-                                          isGuest ? () {} : () => upVotes(ref),
-                                      icon: Icon(
-                                        Constants.up,
-                                        size: 30,
-                                        color:
-                                            post.upvotes.contains(user.uid)
-                                                ? Pallete.redColor
-                                                : null,
-                                      ),
-                                    ),
-                                    Text(
-                                      '${post.upvotes.length - post.downvotes.length == 0 ? 'Votes' : post.upvotes.length - post.downvotes.length}',
-                                      style: const TextStyle(fontSize: 17),
-                                    ),
-                                    IconButton(
-                                      onPressed:
-                                          isGuest ? () {} : () => downVotes(ref),
-                                      icon: Icon(
-                                        Constants.down,
-                                        size: 30,
-                                        color:
-                                            post.downvotes.contains(user.uid)
-                                                ? Pallete.blueColor
-                                                : null,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () => navigateToComment(context),
+                                          () => navigateToComment(context),
                                       icon: const Icon(Icons.comment),
                                     ),
                                     Text(
@@ -267,9 +307,10 @@ class PostCard extends ConsumerWidget {
                                               builder: (context) {
                                                 return Dialog(
                                                   child: Padding(
-                                                    padding: const EdgeInsets.all(
-                                                      20,
-                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          20,
+                                                        ),
                                                     child: GridView.builder(
                                                       shrinkWrap: true,
                                                       gridDelegate:

@@ -5,6 +5,7 @@ import 'package:spark_talk_reddit/core/common/loader.dart';
 import 'package:spark_talk_reddit/core/common/post_card.dart';
 import 'package:spark_talk_reddit/features/post/controller/post_controller.dart';
 import 'package:spark_talk_reddit/features/post/widget/comment_card.dart';
+import 'package:spark_talk_reddit/responsive/responsive.dart';
 
 import '../../../models/post_model.dart';
 import '../../auth/controller/auth_controller.dart';
@@ -55,13 +56,15 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
                   PostCard(post: data),
                   const SizedBox(height: 10),
                   if (!isGuest)
-                    TextField(
-                      onSubmitted: (value) => addComment(data),
-                      controller: commentController,
-                      decoration: InputDecoration(
-                        hintText: 'What are your thoughts?',
-                        filled: true,
-                        border: InputBorder.none,
+                    Responsive(
+                      child: TextField(
+                        onSubmitted: (value) => addComment(data),
+                        controller: commentController,
+                        decoration: InputDecoration(
+                          hintText: 'What are your thoughts?',
+                          filled: true,
+                          border: InputBorder.none,
+                        ),
                       ),
                     ),
                   ref

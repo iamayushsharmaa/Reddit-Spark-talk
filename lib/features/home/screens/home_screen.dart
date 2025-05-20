@@ -65,10 +65,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             },
             icon: const Icon(Icons.search),
           ),
-          IconButton(
-            onPressed: () => navigateToAddScreen(),
-            icon: Icon(Icons.add),
-          ),
+          if (kIsWeb)
+            IconButton(
+              onPressed: () => navigateToAddScreen(),
+              icon: Icon(Icons.add),
+            ),
           IconButton(
             onPressed: () => displayEndDrawer(context),
             icon: CircleAvatar(backgroundImage: NetworkImage(user.profilePic)),

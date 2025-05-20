@@ -97,7 +97,7 @@ class CommunityController extends StateNotifier<bool> {
     required Community community,
   }) async {
     state = true;
-    if (profileFile != null) {
+    if (profileFile != null || webProfileFile != null) {
       final res = await _storageRepository.storeFile(
         path: 'communities/profile',
         id: community.id,
@@ -109,7 +109,7 @@ class CommunityController extends StateNotifier<bool> {
         (r) => community.copyWith(avatar: r),
       );
     }
-    if (bannerFile != null) {
+    if (bannerFile != null|| webBannerFile != null) {
       final res = await _storageRepository.storeFile(
         path: 'communities/banner',
         id: community.id,
