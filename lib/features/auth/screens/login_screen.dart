@@ -9,6 +9,10 @@ import '../../../core/constant/constants.dart';
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
+  void signInAsGuest(WidgetRef ref, BuildContext context){
+    ref.read(authControllerProvider.notifier).signInAsGuest(context);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLogin = ref.watch(authControllerProvider);

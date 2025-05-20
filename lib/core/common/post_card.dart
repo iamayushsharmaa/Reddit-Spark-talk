@@ -42,9 +42,10 @@ class PostCard extends ConsumerWidget {
   }
 
   void awardPost(WidgetRef ref, String award, BuildContext context) {
-    ref.read(postControllerProvider.notifier).awardPost(post: post, award: award, context: context);
+    ref
+        .read(postControllerProvider.notifier)
+        .awardPost(post: post, award: award, context: context);
   }
-
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -122,6 +123,23 @@ class PostCard extends ConsumerWidget {
                                 ),
                             ],
                           ),
+                          if (post.awards.isNotEmpty) ...[
+                            const SizedBox(height: 5),
+                            SizedBox(
+                              height: 25,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: post.awards.length,
+                                itemBuilder: (context, index) {
+                                  final award = post.awards[index];
+                                  return Image.asset(
+                                    Constants.awards[award]!,
+                                    height: 23,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
@@ -244,15 +262,26 @@ class PostCard extends ConsumerWidget {
                                           child: GridView.builder(
                                             shrinkWrap: true,
                                             gridDelegate:
-                                                const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4,),
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 4,
+                                                ),
                                             itemCount: user.awards.length,
                                             itemBuilder: (context, index) {
                                               final award = user.awards[index];
                                               return GestureDetector(
-                                                onTap:() => awardPost(ref,award, context),
+                                                onTap:
+                                                    () => awardPost(
+                                                      ref,
+                                                      award,
+                                                      context,
+                                                    ),
                                                 child: Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Image.asset(Constants.awards[award]!),
+                                                  padding: const EdgeInsets.all(
+                                                    8.0,
+                                                  ),
+                                                  child: Image.asset(
+                                                    Constants.awards[award]!,
+                                                  ),
                                                 ),
                                               );
                                             },
