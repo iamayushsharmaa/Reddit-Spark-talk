@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:routemaster/routemaster.dart';
+import 'package:spark_talk_reddit/core/enums/enums.dart';
 import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart';
 
 import '../../../core/providers/storage_repository.dart';
@@ -83,5 +84,16 @@ class UserProfileController extends StateNotifier<bool> {
 
   Stream<List<Post>> getUserPosts(String uid) {
     return _userRepository.getUserPosts(uid);
+  }
+
+  void updateUserKarma(UserKarma karma) async {
+    UserModel user = _ref.read(userProvider)!;
+
+    user = user.copyWith(karma: user.karma + karma.karma);
+    final res = await _userRepository.updateUserKarma(user);
+
+    res.fold((l) => null, (r) {
+      _ref.read(userProvider.notifier).update((state) => user);
+    });
   }
 }
