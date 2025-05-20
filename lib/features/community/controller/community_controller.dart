@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -90,6 +91,8 @@ class CommunityController extends StateNotifier<bool> {
   void editCommunity({
     required File? profileFile,
     required File? bannerFile,
+    required Uint8List? webProfileFile,
+    required Uint8List? webBannerFile,
     required BuildContext context,
     required Community community,
   }) async {
@@ -99,6 +102,7 @@ class CommunityController extends StateNotifier<bool> {
         path: 'communities/profile',
         id: community.id,
         file: profileFile,
+        webFile: webProfileFile,
       );
       res.fold(
         (l) => showSnackBar(context, l.message),
@@ -110,6 +114,7 @@ class CommunityController extends StateNotifier<bool> {
         path: 'communities/banner',
         id: community.id,
         file: bannerFile,
+        webFile: webBannerFile,
       );
       res.fold(
         (l) => showSnackBar(context, l.message),

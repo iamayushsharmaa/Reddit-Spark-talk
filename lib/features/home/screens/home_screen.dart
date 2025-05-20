@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:routemaster/routemaster.dart';
 import 'package:spark_talk_reddit/core/constant/constants.dart';
 import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart';
 import 'package:spark_talk_reddit/features/home/delegates/search_communities_delegate.dart';
@@ -26,10 +28,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Scaffold.of(context).openEndDrawer();
   }
 
-  void onPageChanged(int index){
+  void onPageChanged(int index) {
     setState(() {
       _page = index;
     });
+  }
+
+  void navigateToAddScreen() {
+    Routemaster.of(context).push('/add-post');
   }
 
   @override
@@ -60,6 +66,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: const Icon(Icons.search),
           ),
           IconButton(
+            onPressed: () => navigateToAddScreen(),
+            icon: Icon(Icons.add),
+          ),
+          IconButton(
             onPressed: () => displayEndDrawer(context),
             icon: CircleAvatar(backgroundImage: NetworkImage(user.profilePic)),
           ),
@@ -68,16 +78,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: Constants.tabWidget[_page],
       drawer: const CommunityListDrawer(),
       endDrawer: isGuest ? null : const ProfileDrawer(),
-      bottomNavigationBar: CupertinoTabBar(
-        activeColor: currentTheme.iconTheme.color,
-        backgroundColor: currentTheme.scaffoldBackgroundColor,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
-        ],
-        onTap: onPageChanged,
-        currentIndex: _page,
-      ),
+      bottomNavigationBar:
+          isGuest || kIsWeb
+              ? null
+              : CupertinoTabBar(
+                activeColor: currentTheme.iconTheme.color,
+                backgroundColor: currentTheme.scaffoldBackgroundColor,
+                items: const [
+                  BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+                  BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
+                ],
+                onTap: onPageChanged,
+                currentIndex: _page,
+              ),
     );
   }
 }

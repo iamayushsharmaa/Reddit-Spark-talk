@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,6 +45,8 @@ class UserProfileController extends StateNotifier<bool> {
   void editProfile({
     required File? profileFile,
     required File? bannerFile,
+    required Uint8List? webProfileFile,
+    required Uint8List? webBannerFile,
     required BuildContext context,
     required String name,
   }) async {
@@ -55,6 +58,7 @@ class UserProfileController extends StateNotifier<bool> {
         path: 'users/profile',
         id: user.uid,
         file: profileFile,
+        webFile: webProfileFile
       );
       res.fold(
         (l) => showSnackBar(context, l.message),
@@ -66,6 +70,7 @@ class UserProfileController extends StateNotifier<bool> {
         path: 'users/banner',
         id: user.uid,
         file: bannerFile,
+        webFile: webBannerFile
       );
       res.fold(
         (l) => showSnackBar(context, l.message),

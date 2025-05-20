@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,8 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   File? bannerFile;
   File? profileFile;
+  Uint8List? webBannerFile;
+  Uint8List? webProfileFile;
   late TextEditingController nameController;
 
   @override
@@ -42,9 +45,15 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final res = await pickImage();
 
     if (res != null) {
-      setState(() {
-        bannerFile = File(res.files.first.path!);
-      });
+      if (webBannerFile != null) {
+        setState(() {
+          webBannerFile = res.files.first.bytes;
+        });
+      } else {
+        setState(() {
+          bannerFile = File(res.files.first.path!);
+        });
+      }
     }
   }
 
@@ -52,9 +61,15 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final res = await pickImage();
 
     if (res != null) {
-      setState(() {
-        profileFile = File(res.files.first.path!);
-      });
+      if (webProfileFile != null) {
+        setState(() {
+          webProfileFile = res.files.first.bytes;
+        });
+      } else {
+        setState(() {
+          profileFile = File(res.files.first.path!);
+        });
+      }
     }
   }
 
@@ -64,6 +79,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         .editProfile(
           profileFile: profileFile,
           bannerFile: bannerFile,
+          webProfileFile: webProfileFile,
+          webBannerFile: webBannerFile,
           context: context,
           name: nameController.text.trim(),
         );
@@ -102,7 +119,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                         radius: const Radius.circular(10),
                                         dashPattern: const [10, 4],
                                         strokeCap: StrokeCap.round,
-                                        color: currentTheme.textTheme.bodyMedium!.color!,
+                                        color:
+                                            currentTheme
+                                                .textTheme
+                                                .bodyMedium!
+                                                .color!,
                                         child: Container(
                                           width: double.infinity,
                                           height: 150,

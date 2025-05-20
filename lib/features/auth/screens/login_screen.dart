@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spark_talk_reddit/core/common/loader.dart';
 import 'package:spark_talk_reddit/core/common/signin_button.dart';
 import 'package:spark_talk_reddit/features/auth/controller/auth_controller.dart';
+import 'package:spark_talk_reddit/responsive/responsive.dart';
 
 import '../../../core/constant/constants.dart';
 
@@ -50,7 +51,7 @@ class LoginScreen extends ConsumerWidget {
                     child: Image.asset(Constants.loginEmote, height: 400),
                   ),
                   const SizedBox(height: 30),
-                  const SignInButton(),
+                  Responsive(child: const SignInButton()),
                 ],
               ),
     );
