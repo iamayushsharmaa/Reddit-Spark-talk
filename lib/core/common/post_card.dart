@@ -41,6 +41,11 @@ class PostCard extends ConsumerWidget {
     Routemaster.of(context).push('/post/${post.id}/comments');
   }
 
+  void awardPost(WidgetRef ref, String award, BuildContext context) {
+    ref.read(postControllerProvider.notifier).awardPost(post: post, award: award, context: context);
+  }
+
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTypeImage = post.type == 'image';
@@ -228,6 +233,37 @@ class PostCard extends ConsumerWidget {
                                             ErrorText(error: err.toString()),
                                     loading: () => const Loader(),
                                   ),
+                              IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return Dialog(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(20),
+                                          child: GridView.builder(
+                                            shrinkWrap: true,
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4,),
+                                            itemCount: user.awards.length,
+                                            itemBuilder: (context, index) {
+                                              final award = user.awards[index];
+                                              return GestureDetector(
+                                                onTap:() => awardPost(ref,award, context),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Image.asset(Constants.awards[award]!),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: Icon(Icons.card_giftcard_outlined),
+                              ),
                             ],
                           ),
                         ],
@@ -239,7 +275,7 @@ class PostCard extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(height: 10,),
+        const SizedBox(height: 10),
       ],
     );
   }

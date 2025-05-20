@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:spark_talk_reddit/features/feed/screens/feed_screen.dart';
 import 'package:spark_talk_reddit/features/post/screens/add_post_screen.dart';
 
-class Constants{
+class Constants {
   static const logo = 'assets/images/logo.png';
   static const google = 'assets/images/google.png';
   static const loginEmote = 'assets/images/loginEmote.png';
@@ -12,14 +12,18 @@ class Constants{
   static const avatarDefault =
       'https://external-preview.redd.it/5kh5OreeLd85QsqYO1Xz_4XSLYwZntfjqou-8fyBFoE.png?auto=webp&s=dbdabd04c399ce9c761ff899f5d38656d1de87c2';
 
+  static const tabWidget = [FeedScreen(), AddPostScreen()];
 
-  static const tabWidget = [
-    FeedScreen(),
-    AddPostScreen(),
-  ];
-
-  static const IconData up = IconData(0xe800, fontFamily: 'MyFlutterApp', fontPackage: null);
-  static const IconData down = IconData(0xe801, fontFamily: 'MyFlutterApp', fontPackage: null);
+  static const IconData up = IconData(
+    0xe800,
+    fontFamily: 'MyFlutterApp',
+    fontPackage: null,
+  );
+  static const IconData down = IconData(
+    0xe801,
+    fontFamily: 'MyFlutterApp',
+    fontPackage: null,
+  );
 
   static const awardsPath = 'assets/images/awards';
 
@@ -33,5 +37,4 @@ class Constants{
     'thankyou': '${Constants.awardsPath}/thankyou.png',
     'til': '${Constants.awardsPath}/til.png',
   };
-
 }
