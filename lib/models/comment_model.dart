@@ -1,6 +1,6 @@
 class Comment {
   final String id;
-  final String comment;
+  final String text;
   final DateTime createdAt;
   final String postId;
   final String uid;
@@ -13,7 +13,7 @@ class Comment {
       other is Comment &&
           runtimeType == other.runtimeType &&
           id == other.id &&
-          comment == other.comment &&
+          text == other.text &&
           createdAt == other.createdAt &&
           postId == other.postId &&
           uid == other.uid &&
@@ -23,7 +23,7 @@ class Comment {
   @override
   int get hashCode =>
       id.hashCode ^
-      comment.hashCode ^
+      text.hashCode ^
       createdAt.hashCode ^
       postId.hashCode ^
       uid.hashCode ^
@@ -32,7 +32,7 @@ class Comment {
 
   Comment({
     required this.id,
-    required this.comment,
+    required this.text,
     required this.createdAt,
     required this.postId,
     required this.uid,
@@ -43,7 +43,7 @@ class Comment {
   Map<String, dynamic> toMap() {
     return {
       'id': this.id,
-      'comment': this.comment,
+      'comment': this.text,
       'createdAt': this.createdAt,
       'postId': this.postId,
       'uid': this.uid,
@@ -55,7 +55,7 @@ class Comment {
   factory Comment.fromMap(Map<String, dynamic> map) {
     return Comment(
       id: map['id'] as String,
-      comment: map['comment'] as String,
+      text: map['comment'] as String,
       createdAt: map['createdAt'] as DateTime,
       postId: map['postId'] as String,
       uid: map['uid'] as String,
@@ -75,7 +75,7 @@ class Comment {
   }) {
     return Comment(
       id: id ?? this.id,
-      comment: comment ?? this.comment,
+      text: comment ?? this.text,
       createdAt: createdAt ?? this.createdAt,
       postId: postId ?? this.postId,
       uid: uid ?? this.uid,
@@ -86,6 +86,6 @@ class Comment {
 
   @override
   String toString() {
-    return 'Model{id: $id, comment: $comment, createdAt: $createdAt, postId: $postId, uid: $uid, username: $username, profilePic: $profilePic}';
+    return 'Model{id: $id, comment: $text, createdAt: $createdAt, postId: $postId, uid: $uid, username: $username, profilePic: $profilePic}';
   }
 }

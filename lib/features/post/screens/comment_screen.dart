@@ -4,6 +4,7 @@ import 'package:spark_talk_reddit/core/common/error_text.dart';
 import 'package:spark_talk_reddit/core/common/loader.dart';
 import 'package:spark_talk_reddit/core/common/post_card.dart';
 import 'package:spark_talk_reddit/features/post/controller/post_controller.dart';
+import 'package:spark_talk_reddit/features/post/widget/comment_card.dart';
 
 import '../../../models/post_model.dart';
 
@@ -33,6 +34,9 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
           text: commentController.text.trim(),
           post: post,
         );
+    setState(() {
+      commentController.text = '';
+    });
   }
 
   @override
@@ -56,6 +60,25 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
                       border: InputBorder.none,
                     ),
                   ),
+                  ref
+                      .watch(getPostCommentProvider(widget.postId))
+                      .when(
+                        data: (data) {
+                          return Expanded(
+                            child: ListView.builder(
+                              itemCount: data.length,
+                              itemBuilder: (context, index) {
+                                final comment = data[index];
+                                return CommentCard(comment: comment);
+                              },
+                            ),
+                          );
+                        },
+                        error:
+                            (error, stackTrace) =>
+                                ErrorText(error: error.toString()),
+                        loading: () => const Loader(),
+                      ),
                 ],
               );
             },
