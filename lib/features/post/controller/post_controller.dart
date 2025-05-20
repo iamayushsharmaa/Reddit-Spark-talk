@@ -27,13 +27,13 @@ final postControllerProvider = StateNotifierProvider<PostController, bool>((
   );
 });
 
-final userPostsProvider = StreamProvider.family((
-  ref,
-  List<Community> communities,
-) {
+final userPostsProvider = StreamProvider.family((ref, List<Community> communities,) {
   final postController = ref.watch(postControllerProvider.notifier);
-
   return postController.fetchUserPost(communities);
+});
+final guestPostsProvider = StreamProvider((ref) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.fetchGuestPost();
 });
 
 final getPostByIdProvider = StreamProvider.family((ref, String postId) {
@@ -188,6 +188,10 @@ class PostController extends StateNotifier<bool> {
       return _postRepository.fetchUserPost(communities);
     }
     return Stream.value([]);
+  }
+
+  Stream<List<Post>> fetchGuestPost() {
+    return _postRepository.fetchGuestPost();
   }
 
   void deletePost(Post post, BuildContext context) async {

@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:spark_talk_reddit/core/failure.dart';

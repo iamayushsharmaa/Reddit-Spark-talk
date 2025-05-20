@@ -54,6 +54,7 @@ class PostCard extends ConsumerWidget {
     final isTypeLink = post.type == 'link';
     final currentTheme = ref.watch(themeNotifierProvider);
     final user = ref.watch(userProvider)!;
+    final isGuest = !user.isAuthenticated;
 
     return Column(
       children: [
@@ -187,7 +188,8 @@ class PostCard extends ConsumerWidget {
                               Row(
                                 children: [
                                   IconButton(
-                                    onPressed: () => upVotes(ref),
+                                    onPressed:
+                                        isGuest ? () {} : () => upVotes(ref),
                                     icon: Icon(
                                       Constants.up,
                                       size: 30,
@@ -202,7 +204,8 @@ class PostCard extends ConsumerWidget {
                                     style: const TextStyle(fontSize: 17),
                                   ),
                                   IconButton(
-                                    onPressed: () => downVotes(ref),
+                                    onPressed:
+                                        isGuest ? () {} : () => downVotes(ref),
                                     icon: Icon(
                                       Constants.down,
                                       size: 30,
@@ -252,45 +255,57 @@ class PostCard extends ConsumerWidget {
                                     loading: () => const Loader(),
                                   ),
                               IconButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return Dialog(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(20),
-                                          child: GridView.builder(
-                                            shrinkWrap: true,
-                                            gridDelegate:
-                                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                                  crossAxisCount: 4,
-                                                ),
-                                            itemCount: user.awards.length,
-                                            itemBuilder: (context, index) {
-                                              final award = user.awards[index];
-                                              return GestureDetector(
-                                                onTap:
-                                                    () => awardPost(
-                                                      ref,
-                                                      award,
-                                                      context,
-                                                    ),
+                                onPressed:
+                                    isGuest
+                                        ? () {}
+                                        : () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return Dialog(
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(
-                                                    8.0,
+                                                    20,
                                                   ),
-                                                  child: Image.asset(
-                                                    Constants.awards[award]!,
+                                                  child: GridView.builder(
+                                                    shrinkWrap: true,
+                                                    gridDelegate:
+                                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                                          crossAxisCount: 4,
+                                                        ),
+                                                    itemCount:
+                                                        user.awards.length,
+                                                    itemBuilder: (
+                                                      context,
+                                                      index,
+                                                    ) {
+                                                      final award =
+                                                          user.awards[index];
+                                                      return GestureDetector(
+                                                        onTap:
+                                                            () => awardPost(
+                                                              ref,
+                                                              award,
+                                                              context,
+                                                            ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets.all(
+                                                                8.0,
+                                                              ),
+                                                          child: Image.asset(
+                                                            Constants
+                                                                .awards[award]!,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
                                                   ),
                                                 ),
                                               );
                                             },
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
+                                          );
+                                        },
                                 icon: Icon(Icons.card_giftcard_outlined),
                               ),
                             ],
